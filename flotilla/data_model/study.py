@@ -1498,6 +1498,7 @@ class Study(object):
             return self.splicing.plot_two_samples(sample1, sample2, **kwargs)
 
     def plot_two_features(self, feature1, feature2, data_type='expression',
+                          sample_subset=None,
                           **kwargs):
         """Make a scatterplot of two features' data
 
@@ -1521,14 +1522,18 @@ class Study(object):
         Raises
         ------
         """
+        sample_ids = self.sample_subset_to_sample_ids(sample_subset)
+
         if data_type == 'expression':
             self.expression.plot_two_features(
                 feature1, feature2, groupby=self.sample_id_to_phenotype,
-                label_to_color=self.phenotype_to_color, **kwargs)
+                label_to_color=self.phenotype_to_color, sample_ids=sample_ids,
+                **kwargs)
         if data_type == 'splicing':
             self.splicing.plot_two_features(
                 feature1, feature2, groupby=self.sample_id_to_phenotype,
-                label_to_color=self.phenotype_to_color, **kwargs)
+                label_to_color=self.phenotype_to_color, sample_ids=sample_ids,
+                **kwargs)
 
     def nmf_space_positions(self, data_type='splicing'):
         if data_type == 'splicing':

@@ -1361,15 +1361,18 @@ class BaseData(object):
         return simple_twoway_scatter(x, y, **kwargs)
 
     def plot_two_features(self, feature1, feature2, groupby=None,
-                          label_to_color=None, fillna=None, **kwargs):
+                          label_to_color=None, fillna=None, sample_ids=None,
+                          **kwargs):
         """Plot the values of two features
         """
+        sample_ids = self.data.index if sample_ids is None else sample_ids
+
         feature1s = self.maybe_renamed_to_feature_id(feature1)
         feature2s = self.maybe_renamed_to_feature_id(feature2)
         for f1 in feature1s:
             for f2 in feature2s:
-                x = self.data.ix[:, f1].copy()
-                y = self.data.ix[:, f2].copy()
+                x = self.data.ix[sample_ids, f1].copy()
+                y = self.data.ix[sample_ids, f2].copy()
 
                 if fillna is not None:
                     x = x.fillna(fillna)
