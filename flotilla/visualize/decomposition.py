@@ -198,10 +198,11 @@ class DecompositionViz(object):
                  show_point_labels=False,
                  show_vectors=True,
                  show_vector_labels=True,
-                 markersize=10, legend=True, bokeh=False, metadata=None):
+                 markersize=10, legend=True, bokeh=False, metadata=None,
+                 match_xy_scale=False):
 
         if bokeh:
-            self._plot_bokeh(metadata, title)
+            self._plot_bokeh(metadata, title, match_xy_scale=match_xy_scale)
         else:
             gs_x = 14
             gs_y = 12
@@ -222,7 +223,7 @@ class DecompositionViz(object):
                               title=title, show_vectors=show_vectors,
                               show_vector_labels=show_vector_labels,
                               markersize=markersize, legend=legend,
-                              ax=ax_components)
+                              ax=ax_components, match_xy_scale=match_xy_scale)
             self.plot_loadings(pc=self.x_pc, ax=ax_loading1)
             self.plot_loadings(pc=self.y_pc, ax=ax_loading2)
             sns.despine()
@@ -232,7 +233,7 @@ class DecompositionViz(object):
                 self.plot_violins()
             return self
 
-    def _plot_bokeh(self, metadata=None, title=''):
+    def _plot_bokeh(self, metadata=None, title='', match_xy_scale=False):
         metadata = metadata if metadata is not None else pd.DataFrame(
             index=self.reduced_space.index)
         # Clean alias
@@ -292,7 +293,8 @@ class DecompositionViz(object):
     def plot_samples(self, show_point_labels=True,
                      title='DataFramePCA', show_vectors=True,
                      show_vector_labels=True, markersize=10,
-                     three_d=False, legend=True, ax=None):
+                     three_d=False, legend=True, ax=None,
+                     match_xy_scale=False):
 
         """
         Given a pandas dataframe, performs DataFramePCA and plots the results in a
@@ -392,6 +394,13 @@ class DecompositionViz(object):
             'Principal Component {} (Explains {:.2f}% Of Variance)'.format(
                 str(self.y_pc), 100 * self.vars[self.y_pc]))
         ax.set_title(title)
+
+        if match_xy_scale:
+            xmin, xmax, ymin, ymax = ax.axis()
+            vmin = min(xmin, ymin)
+            vmax = max(xmax, ymax)
+            lims = (vmin, vmax)
+            ax.set(xlim=lims, ylim=lims)
 
         if legend:
             ax.legend()
