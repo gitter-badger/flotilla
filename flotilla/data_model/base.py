@@ -1369,6 +1369,7 @@ class BaseData(object):
 
         feature1s = self.maybe_renamed_to_feature_id(feature1)
         feature2s = self.maybe_renamed_to_feature_id(feature2)
+        joint_kws = kwargs.pop('joint_kws', {})
         for f1 in feature1s:
             for f2 in feature2s:
                 x = self.data.ix[sample_ids, f1].copy()
@@ -1382,12 +1383,12 @@ class BaseData(object):
                 y.name = feature2
                 x, y = x.align(y, 'inner')
 
-                joint_kws = {}
+                kws = joint_kws.copy()
                 if groupby is not None:
                     if label_to_color is not None:
-                        joint_kws['color'] = [label_to_color[groupby[i]]
+                        kws['color'] = [label_to_color[groupby[i]]
                                               for i in x.index]
-                simple_twoway_scatter(x, y, joint_kws=joint_kws, **kwargs)
+                simple_twoway_scatter(x, y, joint_kws=kws, **kwargs)
 
     @staticmethod
     def _figsizer(shape, multiplier=0.25):
@@ -1432,6 +1433,7 @@ class BaseData(object):
     def plot_correlations(self, sample_ids=None, feature_ids=None, data=None,
                           featurewise=False, sample_id_to_color=None,
                           metric='euclidean', method='average',
+                          corr_method='pearson',
                           scale_fig_by_data=True, **kwargs):
         if data is None:
             data = self._subset(self.data, sample_ids, feature_ids,
@@ -1444,7 +1446,7 @@ class BaseData(object):
 
         if not featurewise:
             data = data.T
-        corr = data.corr()
+        corr = data.corr(method=corr_method)
         corr = corr.dropna(how='all', axis=0).dropna(how='all', axis=1)
 
         # Get a mask of what values are NA, then replace them because

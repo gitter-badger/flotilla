@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 
 
 
+
 # from ..compute.predict import default_classifier
 from ..visualize.color import red
 from .network import NetworkerViz
@@ -711,6 +712,7 @@ class Interactive(object):
         def do_interact(data_type='expression',
                         sample_subset=self.default_sample_subsets,
                         feature_subset=self.default_feature_subset,
+                        corr_method='pearson',
                         metric='euclidean', method='average',
                         list_link='',
                         scale_fig_by_data=True,
@@ -750,6 +752,7 @@ class Interactive(object):
                        data_type=('expression', 'splicing'),
                        sample_subset=self.default_sample_subsets,
                        feature_subset=feature_subsets,
+                       corr_method=('pearson', 'spearman', 'kendall'),
                        metric=metric,
                        method=method,
                        featurewise=False)
