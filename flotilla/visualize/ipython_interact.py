@@ -166,7 +166,7 @@ class Interactive(object):
             self.maybe_make_directory(savefile.value)
 
             gui.widget.result.reduced_fig.savefig(savefile.value,
-                                                  format=extension)
+                                                  format=extension.lstrip('.'))
 
             # add "violins" after the provided filename, but before the
             # extension
@@ -337,19 +337,8 @@ class Interactive(object):
             # Make the directory if it's not already there
             filename, extension = os.path.splitext(savefile.value)
             self.maybe_make_directory(savefile.value)
-
-            gui.widget.result.reduced_fig.savefig(savefile.value,
-                                                  format=extension)
-
-            # add "violins" after the provided filename, but before the
-            # extension
-            violins_file = '{}.{}'.format("_".join([filename, 'violins']),
-                                          extension)
-            try:
-                gui.widget.result.violins_fig.savefig(violins_file,
-                                                      format=extension.lstrip('.'))
-            except AttributeError:
-                pass
+            fig = plt.gcf()
+            fig.savefig(savefile.value, format=extension.lstrip('.'))
 
         savefile = TextWidget(description='savefile')
         save_widget = ButtonWidget(description='save')
@@ -697,7 +686,8 @@ class Interactive(object):
         def save(w):
             filename, extension = os.path.splitext(savefile.value)
             self.maybe_make_directory(savefile.value)
-            gui.widget.result.savefig(savefile.value, format=extension.lstrip('.'))
+            gui.widget.result.savefig(savefile.value,
+                                      format=extension.lstrip('.'))
 
         savefile = TextWidget(description='savefile',
                               value='figures/clustermap.pdf')
@@ -758,6 +748,7 @@ class Interactive(object):
                        featurewise=False)
 
         def save(w):
+            sys.stdout.write('savefile.value: {}'.format(savefile.value))
             filename, extension = os.path.splitext(savefile.value)
             self.maybe_make_directory(savefile.value)
             gui.widget.result.savefig(savefile.value, format=extension.lstrip('.'))
